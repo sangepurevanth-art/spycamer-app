@@ -52,7 +52,9 @@ jobs:
             libtool \
             pkg-config \
             cmake \
-            ccache
+            ccache \
+            aidl \
+            libstdc++6
 
       - name: Install Cython and Buildozer
         run: |
