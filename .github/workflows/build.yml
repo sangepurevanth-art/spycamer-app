@@ -53,7 +53,6 @@ jobs:
             pkg-config \
             cmake \
             ccache \
-            aidl \
             libstdc++6
 
       - name: Install Cython and Buildozer
@@ -62,9 +61,17 @@ jobs:
           pip install "cython<3.0.0"
           pip install buildozer
 
+      - name: Accept Android SDK Licenses & Prepare Tools
+        run: |
+          # Pre-accept all Android SDK licenses
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          yes | android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
       - name: Build APK with Buildozer
         run: |
-          buildozer -v android debug
+          # Use yes pipe to auto-accept licenses during initial SDK download
+          yes | buildozer -v android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
