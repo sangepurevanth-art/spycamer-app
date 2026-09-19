@@ -111,7 +111,7 @@ android.permissions = CAMERA, RECORD_AUDIO, WRITE_EXTERNAL_STORAGE, READ_EXTERNA
 #android.api = 33
 
 # (int) Minimum API your APK / AAB will support.
-#android.minapi = 24
+#android.minapi = 21
 
 # (int) Android SDK version to use
 #android.sdk = 20
