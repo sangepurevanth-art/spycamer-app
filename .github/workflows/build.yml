@@ -61,17 +61,20 @@ jobs:
           pip install "cython<3.0.0"
           pip install buildozer
 
-      - name: Accept Android SDK Licenses & Prepare Tools
+      - name: Setup Android SDK Build-Tools
         run: |
-          # Pre-accept all Android SDK licenses
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          yes | android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9441835_latest.zip -O cmdline-tools.zip
+          unzip -q cmdline-tools.zip
+          mv cmdline-tools/* ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+          rm -rf cmdline-tools cmdline-tools.zip
+          
+          # Pre-install build-tools and platform target
+          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/home/runner/.buildozer/android/platform/android-sdk "build-tools;33.0.2" "platforms;android-33" "platform-tools"
 
       - name: Build APK with Buildozer
         run: |
-          # Use yes pipe to auto-accept licenses during initial SDK download
-          yes | buildozer -v android debug
+          buildozer -v android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
