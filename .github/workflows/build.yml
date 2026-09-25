@@ -1,77 +1,46 @@
-name: Build Android APK
+[app]
 
-on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch:
+# (str) Title of your application
+title = Spy Camera App
 
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-    timeout-minutes: 120
+# (str) Package name
+package.name = spycamera
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+# (str) Package domain (needed for android packaging)
+package.domain = org.test
 
-      - name: Set up Java JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+# (str) Source code where the main.py lives
+source.dir = .
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+# (list) Source files to include
+source.include_exts = py,png,jpg,kv,atlas
 
-      - name: Enable ccache for C/C++ compilation
-        uses: actions/cache@v4
-        with:
-          path: ~/.ccache
-          key: ccache-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            ccache-${{ runner.os }}-
+# (list) List of exclusions to skip compiling Python unit tests
+source.exclude_patterns = license, test, tests, */test/*, */tests/*
 
-      - name: Install System Dependencies
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y --no-install-recommends \
-            build-essential \
-            git \
-            ffmpeg \
-            libsdl2-dev \
-            libsdl2-image-dev \
-            libsdl2-mixer-dev \
-            libsdl2-ttf-dev \
-            libportmidi-dev \
-            libswscale-dev \
-            libavformat-dev \
-            libavcodec-dev \
-            zlib1g-dev \
-            zip \
-            unzip \
-            autoconf \
-            libtool \
-            pkg-config \
-            cmake \
-            ccache \
-            libstdc++6
+# (list) Application requirements
+requirements = hostpython3==3.11.0, python3==3.11.0, kivy, opencv, pyjnius
 
-      - name: Install Cython and Buildozer
-        run: |
-          python -m pip install --upgrade pip
-          pip install "cython<3.0.0"
-          pip install buildozer
+# (str) Supported orientation
+orientation = portrait
 
-      - name: Build APK with Buildozer
-        run: |
-          yes | buildozer -v android debug
+# (bool) Fullscreen application mode
+fullscreen = 0
 
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: spycamera-apk
-          path: bin/*.apk
+# (int) Target Android API
+android.api = 33
+
+# (int) Minimum Android API required
+android.minapi = 24
+
+# (str) Android NDK version
+android.ndk = 25b
+
+# (bool) Automatically accept SDK licenses
+android.accept_sdk_license = True
+
+# (str) Target single modern architecture (prevents long dual builds and log truncation)
+android.archs = arm64-v8a
+
+# (list) Required camera permissions
+android.permissions = CAMERA, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
